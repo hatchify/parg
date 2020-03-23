@@ -7,7 +7,7 @@ import (
 	"github.com/hatchify/simply"
 )
 
-var emptyString = ""
+var emptyAction = ""
 var emptyArguments = []*Argument{}
 var emptyFlags = map[string]*Flag{}
 
@@ -21,18 +21,29 @@ func TestSimpleParse_Empty(context *testing.T) {
 	// Execute test with input
 	command := simpleParse(args)
 
-	// Run validations
-	test := simply.TestTarget(command.Action, "Action", context)
-	result := test.Equals(emptyString)
-	test.Validate(result)
+	expectedAction := emptyAction
+	expectedArgs := emptyArguments
+	expectedFlags := emptyFlags
 
-	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Target(command.Arguments).Equals(emptyArguments)
-	argTest.Validate(argResult)
+	// Run short hand validations
+	test := simply.Target(command, context, "Command")
+	test.Validate(test.Equals(Command{expectedAction, expectedArgs, expectedFlags}))
 
-	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Target(command.Flags).Equals(emptyFlags)
-	flagTest.Validate(flagResult)
+	// Run expanded short hand
+	action := simply.Target(command.Action, context, "Action")
+	result := action.Equals(expectedAction)
+	action.Validate(result)
+
+	// Run long hand
+	arg := simply.Test(context, "Arguments")
+	result = arg.Target(command.Arguments).Equals(expectedArgs)
+	arg.Validate(result)
+
+	// Run expanded long hand
+	flag := simply.Test(context, "Flags")
+	flag.Target(command.Flags)
+	result = flag.Equals(expectedFlags)
+	flag.Validate(result)
 }
 
 func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
@@ -41,20 +52,13 @@ func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
 	args := strings.Split(input, " ")
 	command := simpleParse(args)
 
+	// Expected values
 	expectedAction := "sync"
-
-	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Target(command.Action).Equals(expectedAction)
-	actionTest.Validate(actionResult)
 
 	var arg Argument
 	arg.Name = "mod-common"
 	arg.Value = "mod-common"
-	expectedArguments := []*Argument{&arg}
-
-	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Target(command.Arguments).Equals(expectedArguments)
-	argTest.Validate(argResult)
+	expectedArgs := []*Argument{&arg}
 
 	var flag Flag
 	flag.Name = "-i"
@@ -62,9 +66,25 @@ func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
 	flag.Value = []string{"hatchify"}
 	expectedFlags := map[string]*Flag{"-i": &flag}
 
-	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Target(command.Flags).Equals(expectedFlags)
-	flagTest.Validate(flagResult)
+	// Run short hand validations
+	test := simply.Target(command, context, "Command")
+	test.Validate(test.Equals(Command{expectedAction, expectedArgs, expectedFlags}))
+
+	// Run expanded short hand
+	action := simply.Target(command.Action, context, "Action")
+	result := action.Equals(expectedAction)
+	action.Validate(result)
+
+	// Run long hand
+	argTest := simply.Test(context, "Arguments")
+	result = argTest.Target(command.Arguments).Equals(expectedArgs)
+	argTest.Validate(result)
+
+	// Run expanded long hand
+	flagTest := simply.Test(context, "Flags")
+	flagTest.Target(command.Flags)
+	result = flagTest.Equals(expectedFlags)
+	flagTest.Validate(result)
 }
 
 func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
@@ -75,18 +95,10 @@ func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
 
 	expectedAction := "sync"
 
-	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Target(command.Action).Equals(expectedAction)
-	actionTest.Validate(actionResult)
-
 	var arg Argument
 	arg.Name = "mod-common"
 	arg.Value = "mod-common"
-	expectedArguments := []*Argument{&arg}
-
-	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Target(command.Arguments).Equals(expectedArguments)
-	argTest.Validate(argResult)
+	expectedArgs := []*Argument{&arg}
 
 	var flag Flag
 	flag.Name = "-i"
@@ -94,9 +106,25 @@ func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
 	flag.Value = []string{"hatchify"}
 	expectedFlags := map[string]*Flag{"-i": &flag}
 
-	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Target(command.Flags).Equals(expectedFlags)
-	flagTest.Validate(flagResult)
+	// Run short hand validations
+	test := simply.Target(command, context, "Command")
+	test.Validate(test.Equals(Command{expectedAction, expectedArgs, expectedFlags}))
+
+	// Run expanded short hand
+	action := simply.Target(command.Action, context, "Action")
+	result := action.Equals(expectedAction)
+	action.Validate(result)
+
+	// Run long hand
+	argTest := simply.Test(context, "Arguments")
+	result = argTest.Target(command.Arguments).Equals(expectedArgs)
+	argTest.Validate(result)
+
+	// Run expanded long hand
+	flagTest := simply.Test(context, "Flags")
+	flagTest.Target(command.Flags)
+	result = flagTest.Equals(expectedFlags)
+	flagTest.Validate(result)
 }
 
 func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
@@ -107,18 +135,10 @@ func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 
 	expectedAction := "sync"
 
-	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Target(command.Action).Equals(expectedAction)
-	actionTest.Validate(actionResult)
-
 	var arg Argument
 	arg.Name = "mod-common"
 	arg.Value = "mod-common"
-	expectedArguments := []*Argument{&arg}
-
-	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Target(command.Arguments).Equals(expectedArguments)
-	argTest.Validate(argResult)
+	expectedArgs := []*Argument{&arg}
 
 	var iFlag Flag
 	iFlag.Name = "-i"
@@ -131,7 +151,23 @@ func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 	nameFlag.Type = BOOL
 	expectedFlags := map[string]*Flag{"-i": &iFlag, "-name-only": &nameFlag}
 
-	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Target(command.Flags).Equals(expectedFlags)
-	flagTest.Validate(flagResult)
+	// Run short hand validations
+	test := simply.Target(command, context, "Command")
+	test.Validate(test.Equals(Command{expectedAction, expectedArgs, expectedFlags}))
+
+	// Run expanded short hand
+	action := simply.Target(command.Action, context, "Action")
+	result := action.Equals(expectedAction)
+	action.Validate(result)
+
+	// Run long hand
+	argTest := simply.Test(context, "Arguments")
+	result = argTest.Target(command.Arguments).Equals(expectedArgs)
+	argTest.Validate(result)
+
+	// Run expanded long hand
+	flagTest := simply.Test(context, "Flags")
+	flagTest.Target(command.Flags)
+	result = flagTest.Equals(expectedFlags)
+	flagTest.Validate(result)
 }
