@@ -135,10 +135,12 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 						// We've exceeded our argument limit
 						return nil, fmt.Errorf("invalid argument count: no rules for argument <" + *arg + ">")
 					}
+
 					argument := curCommand.Arguments[len(args)]
 					if err := argument.Parse(*arg); err != nil {
 						return nil, err
 					}
+
 					args = append(args, argument)
 				}
 
@@ -181,14 +183,14 @@ func simpleParse(argV []string) *Command {
 			}
 
 			// Parse flag
-			debug("Parse flag: ", *arg)
+			debug("  Parse flag: ", *arg)
 			curFlag = *arg
 			gotTrailing = false
 		} else {
 			if gotTrailing && len(command.Action) == 0 {
 				// Still need command... Cut last flag trailing args and use this one for command
 				curFlag = ""
-				debug("Reset flag, use command: ", *arg)
+				debug("    Reset flag, use command: ", *arg)
 			}
 
 			// Parse args
@@ -197,14 +199,14 @@ func simpleParse(argV []string) *Command {
 				if len(command.Action) == 0 {
 					// Command
 					command.Action = *arg
-					debug("Command: ", *arg)
+					debug("  Command: ", *arg)
 				} else {
 					// Arg
 					command.Arguments = append(command.Arguments, &Argument{*arg, DEFAULT, false, *arg})
-					debug("Argument: ", *arg)
+					debug("  Argument: ", *arg)
 				}
 			default:
-				debug("Flag: ", *arg)
+				debug("    flag: "+curFlag+" ", *arg)
 				gotTrailing = true
 				if flags, ok := parsedFlags[curFlag]; ok {
 					parsedFlags[curFlag] = append(flags, *arg)
@@ -234,11 +236,11 @@ func simpleParse(argV []string) *Command {
 		command.Flags[key] = &flag
 	}
 
-	debug("Processed:", toString(command))
+	debug("\nProcessed:", toString(command))
 	return command
 }
 
-var shouldPrint = false
+var shouldPrint = true
 
 func debug(args ...interface{}) {
 	if shouldPrint {

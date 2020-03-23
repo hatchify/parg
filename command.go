@@ -6,13 +6,13 @@ package flag
 // Command with Action="" implies program can run without command, or also with any other available commands
 type Command struct {
 	// Action is the parsed primary argument
-	Action string
+	Action string `json:"action"`
 
 	// Arguments used for defining config values and for returning optional and required trailing args
-	Arguments []*Argument
+	Arguments []*Argument `json:"arguments,omitempty"`
 
 	// Flags returned by matched action instance
-	Flags map[string]*Flag
+	Flags map[string]*Flag `json:"flags,omitempty"`
 }
 
 // NewCommand returns a new instance of an empty command

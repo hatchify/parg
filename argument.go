@@ -8,14 +8,14 @@ import (
 // Argument is used for config and returning parsed flags
 type Argument struct {
 	// Name of argument
-	Name string
+	Name string `json:"name"`
 	// Rules for parsing argument values
-	Type ArgType
+	Type ArgType `json:"type,omitempty"`
 	// Throws error if required and not provided
-	Required bool
+	Required bool `json:"required,omitempty"`
 
 	// Populated value for argument
-	Value interface{}
+	Value interface{} `json:"value,omitempty"`
 }
 
 // Parse attempts to set the given value for the given argument. Returns false if it does not meet type criteria
