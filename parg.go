@@ -240,7 +240,7 @@ func simpleParse(argV []string) *Command {
 	return command
 }
 
-var shouldPrint = true
+var shouldPrint = false
 
 func debug(args ...interface{}) {
 	if shouldPrint {

@@ -22,16 +22,16 @@ func TestSimpleParse_Empty(context *testing.T) {
 	command := simpleParse(args)
 
 	// Run validations
-	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Expects(command.Action).ToEqual(emptyString)
-	actionTest.Validate(actionResult)
+	test := simply.TestTarget(command.Action, "Action", context)
+	result := test.Equals(emptyString)
+	test.Validate(result)
 
 	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Expects(command.Arguments).ToEqual(emptyArguments)
+	argResult := argTest.Target(command.Arguments).Equals(emptyArguments)
 	argTest.Validate(argResult)
 
 	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Expects(command.Flags).ToEqual(emptyFlags)
+	flagResult := flagTest.Target(command.Flags).Equals(emptyFlags)
 	flagTest.Validate(flagResult)
 }
 
@@ -44,7 +44,7 @@ func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
 	expectedAction := "sync"
 
 	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Expects(command.Action).ToEqual(expectedAction)
+	actionResult := actionTest.Target(command.Action).Equals(expectedAction)
 	actionTest.Validate(actionResult)
 
 	var arg Argument
@@ -53,7 +53,7 @@ func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
 	expectedArguments := []*Argument{&arg}
 
 	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Expects(command.Arguments).ToEqual(expectedArguments)
+	argResult := argTest.Target(command.Arguments).Equals(expectedArguments)
 	argTest.Validate(argResult)
 
 	var flag Flag
@@ -63,7 +63,7 @@ func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
 	expectedFlags := map[string]*Flag{"-i": &flag}
 
 	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Expects(command.Flags).ToEqual(expectedFlags)
+	flagResult := flagTest.Target(command.Flags).Equals(expectedFlags)
 	flagTest.Validate(flagResult)
 }
 
@@ -76,7 +76,7 @@ func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
 	expectedAction := "sync"
 
 	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Expects(command.Action).ToEqual(expectedAction)
+	actionResult := actionTest.Target(command.Action).Equals(expectedAction)
 	actionTest.Validate(actionResult)
 
 	var arg Argument
@@ -85,7 +85,7 @@ func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
 	expectedArguments := []*Argument{&arg}
 
 	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Expects(command.Arguments).ToEqual(expectedArguments)
+	argResult := argTest.Target(command.Arguments).Equals(expectedArguments)
 	argTest.Validate(argResult)
 
 	var flag Flag
@@ -95,7 +95,7 @@ func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
 	expectedFlags := map[string]*Flag{"-i": &flag}
 
 	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Expects(command.Flags).ToEqual(expectedFlags)
+	flagResult := flagTest.Target(command.Flags).Equals(expectedFlags)
 	flagTest.Validate(flagResult)
 }
 
@@ -108,7 +108,7 @@ func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 	expectedAction := "sync"
 
 	actionTest := simply.Test("Action", context)
-	actionResult := actionTest.Expects(command.Action).ToEqual(expectedAction)
+	actionResult := actionTest.Target(command.Action).Equals(expectedAction)
 	actionTest.Validate(actionResult)
 
 	var arg Argument
@@ -117,7 +117,7 @@ func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 	expectedArguments := []*Argument{&arg}
 
 	argTest := simply.Test("Arguments", context)
-	argResult := argTest.Expects(command.Arguments).ToEqual(expectedArguments)
+	argResult := argTest.Target(command.Arguments).Equals(expectedArguments)
 	argTest.Validate(argResult)
 
 	var iFlag Flag
@@ -132,6 +132,6 @@ func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 	expectedFlags := map[string]*Flag{"-i": &iFlag, "-name-only": &nameFlag}
 
 	flagTest := simply.Test("Flags", context)
-	flagResult := flagTest.Expects(command.Flags).ToEqual(expectedFlags)
+	flagResult := flagTest.Target(command.Flags).Equals(expectedFlags)
 	flagTest.Validate(flagResult)
 }
