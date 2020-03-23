@@ -175,6 +175,11 @@ func simpleParse(argV []string) *Command {
 		debug("\nProcessing: ", *arg)
 
 		if strings.HasPrefix(*arg, "-") {
+			if !gotTrailing && len(curFlag) > 0 {
+				// Append this boolean flag first
+				parsedFlags[curFlag] = []string{}
+			}
+
 			// Parse flag
 			debug("Parse flag: ", *arg)
 			curFlag = *arg
@@ -219,6 +224,7 @@ func simpleParse(argV []string) *Command {
 		switch len(val) {
 		case 0:
 			flag.Type = BOOL
+			flag.Value = true
 		case 1:
 			flag.Type = DEFAULT
 		default:
