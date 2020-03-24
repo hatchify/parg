@@ -229,6 +229,7 @@ func simpleParse(argV []string) *Command {
 			flag.Value = true
 		case 1:
 			flag.Type = DEFAULT
+			flag.Value = val[0]
 		default:
 			flag.Type = STRINGS
 		}
