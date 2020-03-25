@@ -14,18 +14,7 @@ func TestConfig_Empty_Parse_Empty_Allow(context *testing.T) {
 	// OS-Parsed input format
 	args := strings.Split(input, " ")
 
-	// Execute test with input
-	parg := new()
-	command, err := parg.validate(args)
-
-	test := simply.Target(err, context, "Error should not exist")
-	result := test.Assert().Equals(nil)
-	test.Validate(result)
-
-	test = simply.Target(command, context, "Command should exist")
-	result = test.Assert().DoesNotEqual(nil)
-	test.Validate(result)
-
+	// Expected results
 	expectedAction := emptyAction
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
@@ -35,27 +24,45 @@ func TestConfig_Empty_Parse_Empty_Allow(context *testing.T) {
 		expectedFlags,
 	}
 
-	// Run short hand validations
-	test = simply.Target(command, context, "Command should be empty")
+	// Execute test with input
+	parg := new()
+	command, err := parg.validate(args)
+
+	// Ensure no error was received
+	test := simply.Target(err, context, "Error should not exist")
+	result := test.Assert().Equals(nil)
+	test.Validate(result)
+
+	// Ensure Command was received
+	test = simply.Target(command, context, "Command should exist")
+	result = test.Assert().DoesNotEqual(nil)
+	test.Validate(result)
+
+	// Validate empty command struct
+	test = simply.Target(command, context, "Command struct should be empty")
 	result = test.Equals(expectedCommand)
 	test.Validate(result)
 
-	// Run expanded short hand
-	action := simply.Target(command.Action, context, "Action should be empty")
+	// Validate empty action string
+	action := simply.Target(command.Action, context, "Action string should be empty")
 	action.Validate(action.Equals(expectedAction))
 
-	// Run long hand
-	arg := simply.Test(context, "Arguments should be empty")
+	// Validate empty arguments slice
+	arg := simply.Test(context, "Arguments slice should be empty")
 	arg.Validate(arg.Target(command.Arguments).Equals(expectedArgs))
 
-	// Run expanded long hand
-	flag := simply.Test(context, "Flags should be empty")
+	// Validate empty flags map
+	flag := simply.Test(context, "Flags map should be empty")
 	flag.Target(command.Flags)
 	result = flag.Equals(expectedFlags)
 	flag.Validate(result)
 }
 
 func TestConfig_Cmd_Parse_Empty_Error(context *testing.T) {
+	// White box input without allowed action
+	input := "gomu"
+	args := strings.Split(input, " ")
+
 	expectedAction := syncAction
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
@@ -65,17 +72,9 @@ func TestConfig_Cmd_Parse_Empty_Error(context *testing.T) {
 		expectedFlags,
 	}
 
-	parg := new()
 	// Set allowed actions "sync"
+	parg := new()
 	parg.AddCommand(expectedCommand)
-
-	// White box input without allowed action
-	input := "gomu"
-
-	// OS-Parsed input format
-	args := strings.Split(input, " ")
-
-	// Execute test with input
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error Should Exists")
@@ -88,6 +87,9 @@ func TestConfig_Cmd_Parse_Empty_Error(context *testing.T) {
 }
 
 func TestConfig_Cmd_Parse_Cmd_Allow(context *testing.T) {
+	input := "gomu sync"
+	args := strings.Split(input, " ")
+
 	expectedAction := syncAction
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
@@ -97,13 +99,9 @@ func TestConfig_Cmd_Parse_Cmd_Allow(context *testing.T) {
 		expectedFlags,
 	}
 
-	parg := new()
 	// Set allowed actions "sync"
+	parg := new()
 	parg.AddCommand(expectedCommand)
-
-	input := "gomu sync"
-
-	args := strings.Split(input, " ")
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error should not exist")
@@ -135,14 +133,12 @@ func TestConfig_Cmd_Parse_Cmd_Allow(context *testing.T) {
 }
 
 func TestConfig_Empty_Parse_Cmd_Error(context *testing.T) {
-	parg := new()
-	// White box input without allowed action
+	// White box input unallowed action
 	input := "gomu sync"
-
-	// OS-Parsed input format
 	args := strings.Split(input, " ")
 
 	// Execute test with input
+	parg := new()
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error Should Exists")
@@ -155,6 +151,11 @@ func TestConfig_Empty_Parse_Cmd_Error(context *testing.T) {
 }
 
 func TestConfig_Cmd_Parse_Cmd2_Error(context *testing.T) {
+	// White box input without allowed action
+	input := "gomu deploy"
+	// OS-Parsed input format
+	args := strings.Split(input, " ")
+
 	expectedAction := syncAction
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
@@ -167,12 +168,6 @@ func TestConfig_Cmd_Parse_Cmd2_Error(context *testing.T) {
 	parg := new()
 	// Set allowed actions "sync"
 	parg.AddCommand(expectedCommand)
-
-	// White box input without allowed action
-	input := "gomu deploy"
-
-	// OS-Parsed input format
-	args := strings.Split(input, " ")
 
 	// Execute test with input
 	command, err := parg.validate(args)
@@ -187,6 +182,9 @@ func TestConfig_Cmd_Parse_Cmd2_Error(context *testing.T) {
 }
 
 func TestConfigParse_1FlagAllowed(context *testing.T) {
+	input := "gomu -i hatchify"
+	args := strings.Split(input, " ")
+
 	// Expected values
 	expectedAction := emptyAction
 	expectedArgs := emptyArguments
@@ -202,9 +200,6 @@ func TestConfigParse_1FlagAllowed(context *testing.T) {
 	parg := new()
 	parg.AddGlobalFlag(hatchifyIFlag)
 
-	input := "gomu -i hatchify"
-
-	args := strings.Split(input, " ")
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error should not exist")
@@ -236,6 +231,9 @@ func TestConfigParse_1FlagAllowed(context *testing.T) {
 }
 
 func TestConfigParse_BoolFlagAllowed(context *testing.T) {
+	input := "gomu -name-only"
+	args := strings.Split(input, " ")
+
 	// Expected values
 	expectedAction := emptyAction
 	expectedArgs := emptyArguments
@@ -251,9 +249,6 @@ func TestConfigParse_BoolFlagAllowed(context *testing.T) {
 	parg := new()
 	parg.AddGlobalFlag(nameOnlyFlag)
 
-	input := "gomu -name-only"
-
-	args := strings.Split(input, " ")
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error should not exist")
