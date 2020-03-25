@@ -448,11 +448,8 @@ func TestConfigParse_1Flag_Cmd_1FlagMatch(context *testing.T) {
 
 	// Run short hand validations
 	test := simply.Target(command, context, "Command Valid")
-	test.Validate(test)
+	test.DoesNotEqual(nil)
 	test.Equals(expectedCommand)
-	test.DoesNotEqual(expectedCommand)
-	test.Validate(test)
-	test.DoesNotEqual(expectedCommand)
 	test.Validate(test)
 
 	// Run expanded short hand
