@@ -29,33 +29,29 @@ func TestConfig_Empty_Parse_Empty_Allow(context *testing.T) {
 	command, err := parg.validate(args)
 
 	// Ensure no error was received
-	test := simply.Target(err, context, "Error should not exist")
-	result := test.Assert().Equals(nil)
-	test.Validate(result)
+	errTarget := simply.Target(err, context, "Error should not exist")
+	errResult := simply.Assert(errTarget).Equals(nil)
+	errTarget.Validate(errResult)
 
 	// Ensure Command was received
-	test = simply.Target(command, context, "Command should exist")
-	result = test.Assert().DoesNotEqual(nil)
-	test.Validate(result)
-
-	// Validate empty command struct
-	test = simply.Target(command, context, "Command struct should be empty")
-	result = test.Equals(expectedCommand)
-	test.Validate(result)
+	cmdTarget := simply.Target(command, context, "Command should exist, but be empty")
+	cmdTarget.DoesNotEqual(nil)
+	cmdTarget.Equals(expectedCommand)
+	cmdTarget.Validate(cmdTarget)
 
 	// Validate empty action string
-	action := simply.Target(command.Action, context, "Action string should be empty")
-	action.Validate(action.Equals(expectedAction))
+	actionTarget := simply.Target(command.Action, context, "Action string should be empty")
+	actionTarget.Validate(actionTarget.Equals(expectedAction))
 
 	// Validate empty arguments slice
-	arg := simply.Test(context, "Arguments slice should be empty")
-	arg.Validate(arg.Target(command.Arguments).Equals(expectedArgs))
+	argTest := simply.Test(context, "Arguments slice should be empty")
+	argTest.Validate(argTest.Target(command.Arguments).Equals(expectedArgs))
 
 	// Validate empty flags map
-	flag := simply.Test(context, "Flags map should be empty")
-	flag.Target(command.Flags)
-	result = flag.Equals(expectedFlags)
-	flag.Validate(result)
+	flagTest := simply.Test(context, "Flags map should be empty")
+	flagTest.Target(command.Flags)
+	flagResult := flagTest.Equals(expectedFlags)
+	flagTest.Validate(flagResult)
 }
 
 func TestConfig_Cmd_Parse_Empty_Error(context *testing.T) {
@@ -451,9 +447,13 @@ func TestConfigParse_1Flag_Cmd_1FlagMatch(context *testing.T) {
 	}
 
 	// Run short hand validations
-	test := simply.Target(command, context, "Command")
-	result := test.Equals(expectedCommand)
-	test.Validate(result)
+	test := simply.Target(command, context, "Command Valid")
+	test.Validate(test)
+	test.Equals(expectedCommand)
+	test.DoesNotEqual(expectedCommand)
+	test.Validate(test)
+	test.DoesNotEqual(expectedCommand)
+	test.Validate(test)
 
 	// Run expanded short hand
 	action := simply.Target(command.Action, context, "Action")
@@ -461,7 +461,7 @@ func TestConfigParse_1Flag_Cmd_1FlagMatch(context *testing.T) {
 
 	// Run long hand
 	argTest := simply.Test(context, "Arguments")
-	result = argTest.Target(command.Arguments).Equals(expectedArgs)
+	result := argTest.Target(command.Arguments).Equals(expectedArgs)
 	argTest.Validate(result)
 
 	// Run expanded long hand
