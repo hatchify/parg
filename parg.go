@@ -18,36 +18,43 @@ type Parg struct {
 	GlobalFlags []Flag
 }
 
-// Private singleton
-var parg Parg
+var parg = new()
+
+func new() *Parg {
+	var parg Parg
+	parg.AllowedCommands = []Command{}
+	parg.GlobalFlags = []Flag{}
+	return &parg
+}
 
 // AddGlobalFlag appends an allowed optional flag for all commands to the existing set
-func AddGlobalFlag(flag Flag) {
-	parg.GlobalFlags = append(parg.GlobalFlags, flag)
+func (p *Parg) AddGlobalFlag(flag Flag) {
+	p.GlobalFlags = append(p.GlobalFlags, flag)
 }
 
 // SetGlobalFlags overwrites the allowed optional flags for all commands
-func SetGlobalFlags(flags []Flag) {
-	parg.GlobalFlags = flags
+func (p *Parg) SetGlobalFlags(flags []Flag) {
+	p.GlobalFlags = flags
 }
 
 // AddCommand appends an allowed command to expect.
 // Empty set enforces no arguments, throws error if argument detected
 // Adding Command with name "" allows no arguments, along with any other allowed commands
-func AddCommand(command Command) {
-	parg.AllowedCommands = append(parg.AllowedCommands, command)
+func (p *Parg) AddCommand(command Command) {
+	p.AllowedCommands = append(p.AllowedCommands, command)
 }
 
 // SetCommands overwrites the allowed commands
-func SetCommands(commands []Command) {
-	parg.AllowedCommands = commands
+func (p *Parg) SetCommands(commands []Command) {
+	p.AllowedCommands = commands
 }
 
 // GetGlobalFlags returns allowed flags for global config
 func (p *Parg) GetGlobalFlags() (allowedFlags map[string]*Flag) {
+	allowedFlags = map[string]*Flag{}
 	var flag *Flag
 	for flagIndex := range p.GlobalFlags {
-		*flag = p.GlobalFlags[flagIndex]
+		flag = &p.GlobalFlags[flagIndex]
 		for identifierIndex := range flag.Identifiers {
 			allowedFlags[flag.Identifiers[identifierIndex]] = flag
 		}
@@ -58,9 +65,10 @@ func (p *Parg) GetGlobalFlags() (allowedFlags map[string]*Flag) {
 
 // GetAllowedCommands aggregates configured commands
 func (p *Parg) GetAllowedCommands() (allowedCommands map[string]*Command) {
+	allowedCommands = map[string]*Command{}
 	var command *Command
-	for i := range parg.AllowedCommands {
-		*command = parg.AllowedCommands[i]
+	for i := range p.AllowedCommands {
+		command = &p.AllowedCommands[i]
 		allowedCommands[command.Action] = command
 	}
 
@@ -69,10 +77,10 @@ func (p *Parg) GetAllowedCommands() (allowedCommands map[string]*Command) {
 
 // Validate `p.Arguments()` will return a command for the os.Args provided with the configured Parg instance
 // error if fails to validate config
-func (p *Parg) Validate() (*Command, error) {
+func Validate() (*Command, error) {
 	var argV = os.Args
 
-	return p.validate(argV)
+	return parg.validate(argV)
 }
 
 // Simple will return a command for the os.Args provided with default parse configuration
@@ -86,8 +94,8 @@ func Simple() *Command {
 func (p *Parg) validate(argV []string) (*Command, error) {
 	var curCommand *Command
 	var action string
-	var args []*Argument
-	var flags map[string]*Flag
+	var args = []*Argument{}
+	var flags = map[string]*Flag{}
 
 	allowedFlags := p.GetGlobalFlags()
 	allowedCommands := p.GetAllowedCommands()
@@ -100,18 +108,29 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 
 		if strings.HasPrefix(*arg, "-") {
 			// Check if allows flag
-			if flag, ok := allowedFlags[*arg]; ok {
-				if _, ok := flags[flag.Name]; !ok {
+			if allowedFlag, ok := allowedFlags[*arg]; ok {
+				var newFlag *Flag
+				if newFlag, ok = flags[allowedFlag.Name]; ok {
+					// newFlag is old, use old flag
+				} else {
+					// Create new flag instance
+					newFlag = &Flag{
+						Name:        allowedFlag.Name,
+						Identifiers: allowedFlag.Identifiers,
+						Type:        allowedFlag.Type,
+					}
+
 					// Add the flag
-					flags[flag.Name] = flag
+					flags[newFlag.Name] = newFlag
 				}
 
-				if flag.Type == BOOL {
+				if allowedFlag.Type == BOOL {
 					// Existence is sufficient, no trailing args expected
+					newFlag.Value = true
 					curFlag = nil
 				} else {
 					// Set flag and append trailing values
-					curFlag = flag
+					curFlag = newFlag
 				}
 			} else {
 				return nil, fmt.Errorf("invalid flag <" + *arg + "> encountered")
@@ -154,6 +173,11 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 		}
 	}
 
+	if _, ok := allowedCommands[action]; ok || len(action) == 0 && len(allowedCommands) == 0 {
+		// Command allowed
+	} else {
+		return nil, fmt.Errorf("invalid command <" + action + "> encountered")
+	}
 	return &Command{action, args, flags}, nil
 }
 
