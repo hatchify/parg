@@ -782,7 +782,7 @@ func TestConfig_1Flag_1FlagMatch_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(contex
 
 	// Set allowed actions "sync"
 	parg := new()
-	parg.AddCommand(expectedCommand)
+	parg.AddAction(syncAction)
 	parg.AddGlobalFlag(iConfigFlag)
 	parg.AddGlobalFlag(bConfigFlag)
 	parg.AddGlobalFlag(nameOnlyConfigFlag)

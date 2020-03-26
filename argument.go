@@ -38,5 +38,5 @@ func (arg *Argument) Parse(value string) (err error) {
 		return
 	}
 
-	return fmt.Errorf("Invalid value encountered. Cannot set <" + value + "> for argument <" + arg.Name + ">")
+	return fmt.Errorf("Invalid value encountered. Cannot set <" + value + "> for " + string(arg.Type) + " argument <" + arg.Name + ">")
 }

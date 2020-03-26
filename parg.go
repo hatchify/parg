@@ -180,12 +180,23 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 
 			} else {
 				// Argument?
-				if len(args) >= len(curCommand.Arguments) {
-					// We've exceeded our argument limit
-					return nil, fmt.Errorf("invalid argument count: no rules for argument <" + *arg + ">")
+				var argument *Argument
+				argCount := len(args)
+				if curCommand.Arguments != nil {
+					if argCount >= len(curCommand.Arguments) {
+						// We've exceeded our argument limit
+						return nil, fmt.Errorf("invalid argument count: no rules for argument <" + *arg + ">")
+					}
+
+					argument = curCommand.Arguments[len(args)]
+				} else {
+					if argCount > 0 && args[argCount-1].Type == STRINGS {
+						argument = args[argCount-1]
+					} else {
+						argument = &Argument{Name: *arg, Type: DEFAULT}
+					}
 				}
 
-				argument := curCommand.Arguments[len(args)]
 				if err := argument.Parse(*arg); err != nil {
 					return nil, err
 				}
