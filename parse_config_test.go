@@ -759,8 +759,8 @@ func TestConfig_1BoolFlag_1Flag_Cmd_2Arg_1_Flag_1FlagArrayMatch(context *testing
 //   1) bool flags immediately preceding command names
 //   2_ array flags before command is set
 // Both justify custom config for flag parsing
-func TestConfig_2FlagArray_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(context *testing.T) {
-	input := "gomu -i test1 -i test2 -name-only sync -b JIRA-Ticket mod-common simply -i hatchify vroomy"
+func TestConfig_1Flag_1FlagMatch_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(context *testing.T) {
+	input := "gomu -include test1 -include test2 -name-only sync -b JIRA-Ticket mod-common simply -i hatchify vroomy"
 
 	args := strings.Split(input, " ")
 
@@ -780,10 +780,13 @@ func TestConfig_2FlagArray_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(context *tes
 		Flags:     expectedFlags,
 	}
 
-	parg.AddCommand(expectedCommand)
-
 	// Set allowed actions "sync"
 	parg := new()
+	parg.AddCommand(expectedCommand)
+	parg.AddGlobalFlag(iConfigFlag)
+	parg.AddGlobalFlag(bConfigFlag)
+	parg.AddGlobalFlag(nameOnlyConfigFlag)
+
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error should not exist")
@@ -792,6 +795,10 @@ func TestConfig_2FlagArray_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(context *tes
 
 	test = simply.Target(command, context, "Command should exist")
 	result = test.Assert().DoesNotEqual(nil)
+	test.Validate(result)
+
+	test = simply.Target(command, context, "Command should match expected values")
+	result = test.Equals(expectedCommand)
 	test.Validate(result)
 
 	test = simply.Target(command.Action, context, "Action should be <sync>")

@@ -18,7 +18,7 @@ type Parg struct {
 	GlobalFlags []Flag
 }
 
-var parg = new()
+var staticParg = new()
 
 func new() *Parg {
 	var parg Parg
@@ -35,6 +35,13 @@ func (p *Parg) AddGlobalFlag(flag Flag) {
 // SetGlobalFlags overwrites the allowed optional flags for all commands
 func (p *Parg) SetGlobalFlags(flags []Flag) {
 	p.GlobalFlags = flags
+}
+
+// AddAction is a shortcut for adding an empty command with action
+func (p *Parg) AddAction(action string) {
+	var command Command
+	command.Action = action
+	p.AllowedCommands = append(p.AllowedCommands, command)
 }
 
 // AddCommand appends an allowed command to expect.
@@ -80,7 +87,7 @@ func (p *Parg) GetAllowedCommands() (allowedCommands map[string]*Command) {
 func Validate() (*Command, error) {
 	var argV = os.Args
 
-	return parg.validate(argV)
+	return staticParg.validate(argV)
 }
 
 // Simple will return a command for the os.Args provided with default parse configuration
@@ -108,67 +115,82 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 
 		if strings.HasPrefix(*arg, "-") {
 			// Check if allows flag
-			if allowedFlag, ok := allowedFlags[*arg]; ok {
-				var newFlag *Flag
-				if newFlag, ok = flags[allowedFlag.Name]; ok {
-					// newFlag is old, use old flag
-				} else {
-					// Create new flag instance
-					newFlag = &Flag{
-						Name:        allowedFlag.Name,
-						Identifiers: allowedFlag.Identifiers,
-						Type:        allowedFlag.Type,
+			var newFlag *Flag
+			for _, allowedFlag := range allowedFlags {
+				for index := range allowedFlag.Identifiers {
+					if allowedFlag.Identifiers[index] == *arg {
+						// We have a winner!
+						// newFlag is old, use old flag
+						// Create new flag instance
+						var ok bool
+						if newFlag, ok = flags[allowedFlag.Name]; !ok {
+							newFlag = &Flag{
+								Name:        allowedFlag.Name,
+								Identifiers: allowedFlag.Identifiers,
+								Type:        allowedFlag.Type,
+							}
+						}
+						break
 					}
-
-					// Add the flag
-					flags[newFlag.Name] = newFlag
 				}
 
-				if allowedFlag.Type == BOOL {
-					// Existence is sufficient, no trailing args expected
-					newFlag.Value = true
-					curFlag = nil
-				} else {
-					// Set flag and append trailing values
-					curFlag = newFlag
+				if newFlag != nil {
+					// We already got one!
+					break
 				}
-			} else {
+			}
+
+			if newFlag == nil {
+				// Miss job
 				return nil, fmt.Errorf("invalid flag <" + *arg + "> encountered")
 			}
+
+			// Add the flag
+			flags[newFlag.Name] = newFlag
+
+			if newFlag.Type == BOOL {
+				// Existence is sufficient, no trailing args expected
+				newFlag.Value = true
+				curFlag = nil
+			} else {
+				// Set flag and append trailing values
+				curFlag = newFlag
+			}
 		} else {
-			if curFlag == nil {
-				// No flag set, this is an action or an arg
-				if len(action) == 0 {
-					// Parse action (or lack thereof)
-					if cmd, ok := allowedCommands[*arg]; ok || len(*arg) == 0 && len(allowedCommands) == 0 {
-						// Set command
-						curCommand = cmd
-						action = cmd.Action
-					} else {
-						return nil, fmt.Errorf("invalid command <" + *arg + "> encountered")
-					}
-
+			if curFlag != nil {
+				if err := curFlag.Parse(*arg); err == nil {
+					// We parsed this arg!
+					continue
 				} else {
-					// Argument?
-					if len(args) == len(curCommand.Arguments)-1 {
-						// We've exceeded our argument limit
-						return nil, fmt.Errorf("invalid argument count: no rules for argument <" + *arg + ">")
-					}
-
-					argument := curCommand.Arguments[len(args)]
-					if err := argument.Parse(*arg); err != nil {
-						return nil, err
-					}
-
-					args = append(args, argument)
+					// We can't parse this arg... fall through
+					curFlag = nil
 				}
-
-				// No flag set to parse
-				continue
 			}
 
-			if err := curFlag.Parse(*arg); err != nil {
-				return nil, err
+			// No flag set, this is an action or an arg
+			if len(action) == 0 {
+				// Parse action (or lack thereof)
+				if cmd, ok := allowedCommands[*arg]; ok || len(*arg) == 0 && len(allowedCommands) == 0 {
+					// Set command
+					curCommand = cmd
+					action = cmd.Action
+				} else {
+					return nil, fmt.Errorf("invalid command <" + *arg + "> encountered")
+				}
+
+			} else {
+				// Argument?
+				if len(args) >= len(curCommand.Arguments) {
+					// We've exceeded our argument limit
+					return nil, fmt.Errorf("invalid argument count: no rules for argument <" + *arg + ">")
+				}
+
+				argument := curCommand.Arguments[len(args)]
+				if err := argument.Parse(*arg); err != nil {
+					return nil, err
+				}
+
+				args = append(args, argument)
 			}
 		}
 	}
