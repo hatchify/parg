@@ -759,64 +759,50 @@ func TestConfig_1BoolFlag_1Flag_Cmd_2Arg_1_Flag_1FlagArrayMatch(context *testing
 //   1) bool flags immediately preceding command names
 //   2_ array flags before command is set
 // Both justify custom config for flag parsing
-/*
-func TestConfig_1BoolFlag_Cmd_2Arg_1_Flag_1FlagArray(context *testing.T) {
-	input := "gomu -name-only deploy mod-common simply -b JIRA-Ticket -i vroomy hatchify"
+func TestConfig_2FlagArray_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(context *testing.T) {
+	input := "gomu -i test1 -i test2 -name-only sync -b JIRA-Ticket mod-common simply -i hatchify vroomy"
 
 	args := strings.Split(input, " ")
-	command := simpleParse(args)
 
-	expectedAction := "deploy"
+	expectedAction := syncAction
+	expectedArgs := []*Argument{
+		&modcommonArg,
+		&simplyArg,
+	}
+	expectedFlags := map[string]*Flag{
+		"-i":         &test1test2hatchifyvroomyIFlag,
+		"-name-only": &nameOnlyFlag,
+		"-b":         &bFlag,
+	}
+	expectedCommand := Command{
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
+	}
 
-	var arg Argument
-	arg.Name = "mod-common"
-	arg.Value = "mod-common"
-	var arg2 Argument
-	arg2.Name = "simply"
-	arg2.Value = "simply"
-	expectedArgs := []*Argument{&arg, &arg2}
+	parg.AddCommand(expectedCommand)
 
-	var iFlag Flag
-	iFlag.Name = "-i"
-	iFlag.Identifiers = []string{"-i"}
-	iFlag.Value = []string{"vroomy", "hatchify"}
-	iFlag.Type = STRINGS
-	var bFlag Flag
-	bFlag.Name = "-b"
-	bFlag.Identifiers = []string{"-b"}
-	bFlag.Value = "JIRA-Ticket"
-	bFlag.Type = DEFAULT
-	var nameFlag Flag
-	nameFlag.Name = "-name-only"
-	nameFlag.Identifiers = []string{"-name-only"}
-	nameFlag.Value = true
-	nameFlag.Type = BOOL
-	expectedFlags := map[string]*Flag{"-i": &iFlag, "-name-only": &nameFlag, "-b": &bFlag}
+	// Set allowed actions "sync"
+	parg := new()
+	command, err := parg.validate(args)
 
-	// Run short hand validations
-	test := simply.Target(command, context, "Command")
-	test.Validate(test.Equals(Command{expectedAction, expectedArgs, expectedFlags}))
+	test := simply.Target(err, context, "Error should not exist")
+	result := test.Assert().Equals(nil)
+	test.Validate(result)
 
-	// Run expanded short hand
-	action := simply.Target(command.Action, context, "Action")
-	result := action.Equals(expectedAction)
-	action.Validate(result)
+	test = simply.Target(command, context, "Command should exist")
+	result = test.Assert().DoesNotEqual(nil)
+	test.Validate(result)
 
-	// Run long hand
-	argTest := simply.Test(context, "Arguments")
-	result = argTest.Target(command.Arguments).Equals(expectedArgs)
-	argTest.Validate(result)
+	test = simply.Target(command.Action, context, "Action should be <sync>")
+	result = test.Equals(syncAction)
+	test.Validate(result)
 
-	// Run expanded long hand
-	flagTest := simply.Test(context, "Flags")
-	flagTest.Target(command.Flags)
-	result = flagTest.Equals(expectedFlags)
-	flagTest.Validate(result)
+	test = simply.Target(command.Arguments, context, "Arguments should be [mod-common, simply]")
+	result = test.Equals(expectedArgs)
+	test.Validate(result)
 
-	// Deep comparison
-	flagValTest := simply.Test(context, "FlagValues")
-	flagValTest.Target(command.Flags["-i"].Value)
-	result = flagValTest.Equals(iFlag.Value)
-	flagValTest.Validate(result)
+	test = simply.Target(command.Flags, context, "Flags should be {-i: [test1, test2, hatchify, simply], -name-only: true, -b: JIRA-Ticket}")
+	result = test.Equals(expectedFlags)
+	test.Validate(result)
 }
-*/

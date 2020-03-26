@@ -55,6 +55,12 @@ var hatchifyvroomytestorgIFlag = Flag{
 	Type:        STRINGS,
 	Value:       []string{"hatchify", "vroomy", "test-org"},
 }
+var test1test2hatchifyvroomyIFlag = Flag{
+	Name:        iFlagName,
+	Identifiers: []string{iFlagName},
+	Type:        STRINGS,
+	Value:       []string{"test1", "test2", "hatchify", "vroomy"},
+}
 
 // -name-only
 var nameOnlyFlagName = "-name-only"
