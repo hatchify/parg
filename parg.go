@@ -18,12 +18,14 @@ type Parg struct {
 	GlobalFlags []Flag
 }
 
-var staticParg = new()
+var staticParg *Parg
 
-func new() *Parg {
+// New returns a clean instance of Parg
+func New() *Parg {
 	var parg Parg
 	parg.AllowedCommands = []Command{}
 	parg.GlobalFlags = []Flag{}
+	staticParg = &parg
 	return &parg
 }
 
@@ -86,6 +88,10 @@ func (p *Parg) GetAllowedCommands() (allowedCommands map[string]*Command) {
 // error if fails to validate config
 func Validate() (*Command, error) {
 	var argV = os.Args
+
+	if staticParg == nil {
+		staticParg = New()
+	}
 
 	return staticParg.validate(argV)
 }

@@ -25,7 +25,7 @@ func TestConfig_Empty_Parse_Empty_Allow(context *testing.T) {
 	}
 
 	// Execute test with input
-	parg := new()
+	parg := New()
 	command, err := parg.validate(args)
 
 	// Ensure no error was received
@@ -69,7 +69,7 @@ func TestConfig_Cmd_Parse_Empty_Error(context *testing.T) {
 	}
 
 	// Set allowed actions "sync"
-	parg := new()
+	parg := New()
 	parg.AddCommand(expectedCommand)
 	command, err := parg.validate(args)
 
@@ -96,7 +96,7 @@ func TestConfig_Cmd_Parse_Cmd_Allow(context *testing.T) {
 	}
 
 	// Set allowed actions "sync"
-	parg := new()
+	parg := New()
 	parg.AddCommand(expectedCommand)
 	command, err := parg.validate(args)
 
@@ -134,7 +134,7 @@ func TestConfig_Empty_Parse_Cmd_Error(context *testing.T) {
 	args := strings.Split(input, " ")
 
 	// Execute test with input
-	parg := new()
+	parg := New()
 	command, err := parg.validate(args)
 
 	test := simply.Target(err, context, "Error Should Exists")
@@ -161,7 +161,7 @@ func TestConfig_Cmd_Parse_Cmd2_Error(context *testing.T) {
 		expectedFlags,
 	}
 
-	parg := new()
+	parg := New()
 	// Set allowed actions "sync"
 	parg.AddCommand(expectedCommand)
 
@@ -193,7 +193,7 @@ func TestConfigParse_1FlagAllowed(context *testing.T) {
 		expectedFlags,
 	}
 
-	parg := new()
+	parg := New()
 	parg.AddGlobalFlag(hatchifyIFlag)
 
 	command, err := parg.validate(args)
@@ -242,7 +242,7 @@ func TestConfigParse_BoolFlagAllowed(context *testing.T) {
 		expectedFlags,
 	}
 
-	parg := new()
+	parg := New()
 	parg.AddGlobalFlag(nameOnlyFlag)
 
 	command, err := parg.validate(args)
@@ -276,7 +276,7 @@ func TestConfigParse_BoolFlagAllowed(context *testing.T) {
 }
 
 func TestConfigParse_1FlagError(context *testing.T) {
-	parg := new()
+	parg := New()
 	parg.AddGlobalFlag(hatchifyIFlag)
 
 	input := "gomu -n hatchify"
@@ -294,7 +294,7 @@ func TestConfigParse_1FlagError(context *testing.T) {
 }
 
 func TestConfigParse_FlagTypeError(context *testing.T) {
-	parg := new()
+	parg := New()
 	parg.AddGlobalFlag(hatchifyIFlag)
 
 	input := "gomu -n hatchify"
@@ -770,9 +770,9 @@ func TestConfig_1Flag_1FlagMatch_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(contex
 		&simplyArg,
 	}
 	expectedFlags := map[string]*Flag{
-		"-i":         &test1test2hatchifyvroomyIFlag,
+		"-i":         &test1test2hatchifyvroomyIncludeFlag,
 		"-name-only": &nameOnlyFlag,
-		"-b":         &bFlag,
+		"-b":         &branchFlag,
 	}
 	expectedCommand := Command{
 		Action:    expectedAction,
@@ -781,10 +781,10 @@ func TestConfig_1Flag_1FlagMatch_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(contex
 	}
 
 	// Set allowed actions "sync"
-	parg := new()
+	parg := New()
 	parg.AddAction(syncAction)
-	parg.AddGlobalFlag(iConfigFlag)
-	parg.AddGlobalFlag(bConfigFlag)
+	parg.AddGlobalFlag(includeConfigFlag)
+	parg.AddGlobalFlag(branchConfigFlag)
 	parg.AddGlobalFlag(nameOnlyConfigFlag)
 
 	command, err := parg.validate(args)

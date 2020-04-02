@@ -28,6 +28,11 @@ var simplyArg = Argument{
 // Config Flags
 var iConfigFlag = Flag{
 	Name:        iFlagName,
+	Identifiers: []string{iFlagName},
+	Type:        DEFAULT,
+}
+var includeConfigFlag = Flag{
+	Name:        iFlagName,
 	Identifiers: []string{iFlagName, "-include"},
 	Type:        STRINGS,
 }
@@ -40,6 +45,11 @@ var nameOnlyConfigFlag = Flag{
 
 var bConfigFlag = Flag{
 	Name:        bFlagName,
+	Identifiers: []string{bFlagName},
+	Type:        DEFAULT,
+}
+var branchConfigFlag = Flag{
+	Name:        bFlagName,
 	Identifiers: []string{bFlagName, "-branch"},
 	Type:        DEFAULT,
 }
@@ -48,6 +58,12 @@ var bConfigFlag = Flag{
 // -b
 var bFlagName = "-b"
 var bFlag = Flag{
+	Name:        bFlagName,
+	Identifiers: []string{bFlagName},
+	Type:        DEFAULT,
+	Value:       "JIRA-Ticket",
+}
+var branchFlag = Flag{
 	Name:        bFlagName,
 	Identifiers: []string{bFlagName, "-branch"},
 	Type:        DEFAULT,
@@ -75,6 +91,14 @@ var hatchifyvroomytestorgIFlag = Flag{
 	Value:       []string{"hatchify", "vroomy", "test-org"},
 }
 var test1test2hatchifyvroomyIFlag = Flag{
+	Name:        iFlagName,
+	Identifiers: []string{iFlagName},
+	Type:        STRINGS,
+	Value:       []string{"test1", "test2", "hatchify", "vroomy"},
+}
+
+// -include
+var test1test2hatchifyvroomyIncludeFlag = Flag{
 	Name:        iFlagName,
 	Identifiers: []string{iFlagName, "-include"},
 	Type:        STRINGS,
