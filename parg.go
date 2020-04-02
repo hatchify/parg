@@ -164,7 +164,32 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 			}
 		} else {
 			if curFlag != nil {
-				if err := curFlag.Parse(*arg); err == nil {
+				// Flag set, but check if this is an action
+				shouldParse := true
+				if len(action) == 0 {
+					// Parse action (or lack thereof)
+					if _, ok := allowedCommands[*arg]; ok {
+						// This is an allowed action, check for other candidates
+						foundAction := false
+						for x := i + 1; x < len(argV); x++ {
+							if _, ok := allowedCommands[argV[x]]; ok {
+								// We have another candidate, we're probably ok to treat this as a param
+								foundAction = true
+								break
+							}
+						}
+						if !foundAction {
+							shouldParse = false
+						}
+					} else {
+						// Not an action.. probably a flag param
+					}
+				}
+
+				if !shouldParse {
+					// This is probably a command, let's skip parsing this arg
+					curFlag = nil
+				} else if err := curFlag.Parse(*arg); err == nil {
 					// We parsed this arg!
 					continue
 				} else {

@@ -813,3 +813,62 @@ func TestConfig_1Flag_1FlagMatch_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(contex
 	result = test.Equals(expectedFlags)
 	test.Validate(result)
 }
+
+// This test cannot pass with default parse rules
+//   1) bool flags immediately preceding command names
+//   2_ array flags before command is set
+// Both justify custom config for flag parsing
+func TestConfig_2FlagArray_Cmd_1Flag_1Arg_1BoolFlag_1Arg_2FlagArrayMatch(context *testing.T) {
+	input := "gomu -include test1 test2 sync -b JIRA-Ticket mod-common -name-only simply -i hatchify vroomy"
+
+	args := strings.Split(input, " ")
+
+	expectedAction := syncAction
+	expectedArgs := []*Argument{
+		&modcommonArg,
+		&simplyArg,
+	}
+	expectedFlags := map[string]*Flag{
+		"-i":         &test1test2hatchifyvroomyIncludeFlag,
+		"-name-only": &nameOnlyFlag,
+		"-b":         &branchFlag,
+	}
+	expectedCommand := Command{
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
+	}
+
+	// Set allowed actions "sync"
+	parg := New()
+	parg.AddAction(syncAction)
+	parg.AddGlobalFlag(includeConfigFlag)
+	parg.AddGlobalFlag(branchConfigFlag)
+	parg.AddGlobalFlag(nameOnlyConfigFlag)
+
+	command, err := parg.validate(args)
+
+	test := simply.Target(err, context, "Error should not exist")
+	result := test.Assert().Equals(nil)
+	test.Validate(result)
+
+	test = simply.Target(command, context, "Command should exist")
+	result = test.Assert().DoesNotEqual(nil)
+	test.Validate(result)
+
+	test = simply.Target(command, context, "Command should match expected values")
+	result = test.Equals(expectedCommand)
+	test.Validate(result)
+
+	test = simply.Target(command.Action, context, "Action should be <sync>")
+	result = test.Equals(syncAction)
+	test.Validate(result)
+
+	test = simply.Target(command.Arguments, context, "Arguments should be [mod-common, simply]")
+	result = test.Equals(expectedArgs)
+	test.Validate(result)
+
+	test = simply.Target(command.Flags, context, "Flags should be {-i: [test1, test2, hatchify, simply], -name-only: true, -b: JIRA-Ticket}")
+	result = test.Equals(expectedFlags)
+	test.Validate(result)
+}
