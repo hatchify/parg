@@ -21,9 +21,9 @@ func TestSimpleParse_Empty(context *testing.T) {
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -59,9 +59,9 @@ func TestSimpleParse_1Flag(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -95,9 +95,9 @@ func TestSimpleParse_Cmd(context *testing.T) {
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -133,9 +133,9 @@ func TestSimpleParse_1Flag_Cmd(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -172,9 +172,9 @@ func TestSimpleParse_Cmd_1Flag(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -211,9 +211,9 @@ func TestSimpleParse_Cmd_1FlagArray(context *testing.T) {
 		iFlagName: &hatchifyvroomyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -250,9 +250,9 @@ func TestSimpleParse_1Flag_Cmd_1FlagMatch(context *testing.T) {
 		iFlagName: &hatchifyvroomyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -289,9 +289,9 @@ func TestSimpleParse_Cmd_1Arg(context *testing.T) {
 	}
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -329,9 +329,9 @@ func TestSimpleParse_Cmd_2Arg(context *testing.T) {
 	}
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -370,9 +370,9 @@ func TestSimpleParse_Cmd_1Arg_1Flag(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -410,9 +410,9 @@ func TestSimple_1Flag_Cmd_1Arg(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -451,9 +451,9 @@ func TestSimple_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 		nameOnlyFlagName:   &nameOnlyFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -494,9 +494,9 @@ func TestSimple_1BoolFlag_1Flag_Cmd_2Arg_1_Flag_1FlagMatch(context *testing.T) {
 		bFlagName:        &bFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -537,9 +537,9 @@ func TestSimple_1BoolFlag_1Flag_Cmd_2Arg_1_Flag_1FlagArrayMatch(context *testing
 		bFlagName:        &bFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -603,7 +603,7 @@ func TestSimple_1BoolFlag_Cmd_2Arg_1_Flag_1FlagArray(context *testing.T) {
 
 	// Run short hand validations
 	test := simply.Target(command, context, "Command")
-	test.Validate(test.Equals(Command{expectedAction, expectedArgs, expectedFlags}))
+	test.Validate(test.Equals(Command{Action: expectedAction, Arguments: expectedArgs, expectedFlags}))
 
 	// Run expanded short hand
 	action := simply.Target(command.Action, context, "Action")

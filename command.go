@@ -13,6 +13,9 @@ type Command struct {
 
 	// Flags returned by matched action instance
 	Flags map[string]*Flag `json:"flags,omitempty"`
+
+	// Details regarding command usage
+	Help string
 }
 
 // NewCommand returns a new instance of an empty command

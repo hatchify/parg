@@ -40,9 +40,10 @@ func (p *Parg) SetGlobalFlags(flags []Flag) {
 }
 
 // AddAction is a shortcut for adding an empty command with action
-func (p *Parg) AddAction(action string) {
+func (p *Parg) AddAction(action string, usage string) {
 	var command Command
 	command.Action = action
+	command.Help = usage
 	p.AllowedCommands = append(p.AllowedCommands, command)
 }
 
@@ -109,6 +110,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 	var action string
 	var args = []*Argument{}
 	var flags = map[string]*Flag{}
+	var help = ""
 
 	allowedFlags := p.GetGlobalFlags()
 	allowedCommands := p.GetAllowedCommands()
@@ -134,6 +136,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 								Name:        allowedFlag.Name,
 								Identifiers: allowedFlag.Identifiers,
 								Type:        allowedFlag.Type,
+								Help:        allowedFlag.Help,
 							}
 						}
 						break
@@ -205,6 +208,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 					// Set command
 					curCommand = cmd
 					action = cmd.Action
+					help = cmd.Help
 				} else {
 					return nil, fmt.Errorf("invalid command <" + *arg + "> encountered")
 				}
@@ -242,7 +246,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 	} else {
 		return nil, fmt.Errorf("invalid command <" + action + "> encountered")
 	}
-	return &Command{action, args, flags}, nil
+	return &Command{action, args, flags, help}, nil
 }
 
 // simpleParse returns a generically parsed argument structure, with default parsing rules:

@@ -16,6 +16,9 @@ type Flag struct {
 	// Rules for parsing flag values
 	Type ArgType `json:"type,omitempty"`
 
+	// Details regarding flag usage
+	Help string
+
 	// Populated values for returned flags
 	Value interface{} `json:"value,omitempty"`
 }

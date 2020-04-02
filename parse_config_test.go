@@ -19,9 +19,9 @@ func TestConfig_Empty_Parse_Empty_Allow(context *testing.T) {
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Execute test with input
@@ -63,9 +63,9 @@ func TestConfig_Cmd_Parse_Empty_Error(context *testing.T) {
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Set allowed actions "sync"
@@ -90,9 +90,9 @@ func TestConfig_Cmd_Parse_Cmd_Allow(context *testing.T) {
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Set allowed actions "sync"
@@ -156,9 +156,9 @@ func TestConfig_Cmd_Parse_Cmd2_Error(context *testing.T) {
 	expectedArgs := emptyArguments
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	parg := New()
@@ -188,9 +188,9 @@ func TestConfigParse_1FlagAllowed(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	parg := New()
@@ -237,9 +237,9 @@ func TestConfigParse_BoolFlagAllowed(context *testing.T) {
 		nameOnlyFlagName: &nameOnlyFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	parg := New()
@@ -324,9 +324,9 @@ func TestConfigParse_1Flag_Cmd(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -363,9 +363,9 @@ func TestConfigParse_Cmd_1Flag(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -402,9 +402,9 @@ func TestConfigParse_Cmd_1FlagArray(context *testing.T) {
 		iFlagName: &hatchifyvroomyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -441,9 +441,9 @@ func TestConfigParse_1Flag_Cmd_1FlagMatch(context *testing.T) {
 		iFlagName: &hatchifyvroomyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -481,9 +481,9 @@ func TestConfigParse_Cmd_1Arg(context *testing.T) {
 	}
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -521,9 +521,9 @@ func TestConfigParse_Cmd_2Arg(context *testing.T) {
 	}
 	expectedFlags := emptyFlags
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -562,9 +562,9 @@ func TestConfigParse_Cmd_1Arg_1Flag(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -602,9 +602,9 @@ func TestConfig_1Flag_Cmd_1Arg(context *testing.T) {
 		hatchifyIFlag.Name: &hatchifyIFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -643,9 +643,9 @@ func TestConfig_1BoolFlag_1Flag_Cmd_1Arg(context *testing.T) {
 		nameOnlyFlagName:   &nameOnlyFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -686,9 +686,9 @@ func TestConfig_1BoolFlag_1Flag_Cmd_2Arg_1_Flag_1FlagMatch(context *testing.T) {
 		bFlagName:        &bFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -729,9 +729,9 @@ func TestConfig_1BoolFlag_1Flag_Cmd_2Arg_1_Flag_1FlagArrayMatch(context *testing
 		bFlagName:        &bFlag,
 	}
 	expectedCommand := Command{
-		expectedAction,
-		expectedArgs,
-		expectedFlags,
+		Action:    expectedAction,
+		Arguments: expectedArgs,
+		Flags:     expectedFlags,
 	}
 
 	// Run short hand validations
@@ -782,7 +782,7 @@ func TestConfig_1Flag_1FlagMatch_1BoolFlag_Cmd_1Flag_2Arg_2FlagArrayMatch(contex
 
 	// Set allowed actions "sync"
 	parg := New()
-	parg.AddAction(syncAction)
+	parg.AddAction(syncAction, "")
 	parg.AddGlobalFlag(includeConfigFlag)
 	parg.AddGlobalFlag(branchConfigFlag)
 	parg.AddGlobalFlag(nameOnlyConfigFlag)
@@ -841,7 +841,7 @@ func TestConfig_2FlagArray_Cmd_1Flag_1Arg_1BoolFlag_1Arg_2FlagArrayMatch(context
 
 	// Set allowed actions "sync"
 	parg := New()
-	parg.AddAction(syncAction)
+	parg.AddAction(syncAction, "")
 	parg.AddGlobalFlag(includeConfigFlag)
 	parg.AddGlobalFlag(branchConfigFlag)
 	parg.AddGlobalFlag(nameOnlyConfigFlag)
