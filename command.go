@@ -24,3 +24,63 @@ func NewCommand() (cmd *Command) {
 	cmd = &command
 	return
 }
+
+// Args returns array of arg names
+func (cmd *Command) Args() []string {
+	args := make([]string, len(cmd.Arguments))
+	for i, argument := range cmd.Arguments {
+		args[i] = argument.Name
+	}
+
+	return args
+}
+
+// StringsFrom parses []string from flags["flagIdentifier"]
+func (cmd *Command) StringsFrom(flagIdentifier string) []string {
+	vals, ok := cmd.Flags[flagIdentifier].Value.([]string)
+	if !ok {
+		return []string{}
+	}
+
+	return vals
+}
+
+// StringFrom parses string from flags["flagIdentifier"]
+func (cmd *Command) StringFrom(flagIdentifier string) string {
+	val, ok := cmd.Flags[flagIdentifier].Value.(string)
+	if !ok {
+		return ""
+	}
+
+	return val
+}
+
+// IntsFrom parses []int from flags["flagIdentifier"]
+func (cmd *Command) IntsFrom(flagIdentifier string) []int {
+	val, ok := cmd.Flags[flagIdentifier].Value.([]int)
+	if !ok {
+		return []int{}
+	}
+
+	return val
+}
+
+// IntFrom parses int from flags["flagIdentifier"]
+func (cmd *Command) IntFrom(flagIdentifier string) int {
+	val, ok := cmd.Flags[flagIdentifier].Value.(int)
+	if !ok {
+		return 0
+	}
+
+	return val
+}
+
+// BoolFrom parses string from flags["flagIdentifier"]
+func (cmd *Command) BoolFrom(flagIdentifier string) bool {
+	val, ok := cmd.Flags[flagIdentifier].Value.(bool)
+	if !ok {
+		return false
+	}
+
+	return val
+}
