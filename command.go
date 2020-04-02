@@ -36,51 +36,71 @@ func (cmd *Command) Args() []string {
 }
 
 // StringsFrom parses []string from flags["flagIdentifier"]
-func (cmd *Command) StringsFrom(flagIdentifier string) []string {
-	vals, ok := cmd.Flags[flagIdentifier].Value.([]string)
+func (cmd *Command) StringsFrom(flagIdentifier string) (vals []string) {
+	flag, ok := cmd.Flags[flagIdentifier]
 	if !ok {
-		return []string{}
+		return
 	}
 
-	return vals
+	vals, ok = flag.Value.([]string)
+	if !ok {
+		return
+	}
+	return
 }
 
 // StringFrom parses string from flags["flagIdentifier"]
-func (cmd *Command) StringFrom(flagIdentifier string) string {
-	val, ok := cmd.Flags[flagIdentifier].Value.(string)
+func (cmd *Command) StringFrom(flagIdentifier string) (val string) {
+	flag, ok := cmd.Flags[flagIdentifier]
 	if !ok {
-		return ""
+		return
 	}
 
-	return val
+	val, ok = flag.Value.(string)
+	if !ok {
+		return
+	}
+	return
 }
 
 // IntsFrom parses []int from flags["flagIdentifier"]
-func (cmd *Command) IntsFrom(flagIdentifier string) []int {
-	val, ok := cmd.Flags[flagIdentifier].Value.([]int)
+func (cmd *Command) IntsFrom(flagIdentifier string) (vals []int) {
+	flag, ok := cmd.Flags[flagIdentifier]
 	if !ok {
-		return []int{}
+		return
 	}
 
-	return val
+	vals, ok = flag.Value.([]int)
+	if !ok {
+		return
+	}
+	return
 }
 
 // IntFrom parses int from flags["flagIdentifier"]
-func (cmd *Command) IntFrom(flagIdentifier string) int {
-	val, ok := cmd.Flags[flagIdentifier].Value.(int)
+func (cmd *Command) IntFrom(flagIdentifier string) (val int) {
+	flag, ok := cmd.Flags[flagIdentifier]
 	if !ok {
-		return 0
+		return
 	}
 
-	return val
+	val, ok = flag.Value.(int)
+	if !ok {
+		return
+	}
+	return
 }
 
 // BoolFrom parses string from flags["flagIdentifier"]
-func (cmd *Command) BoolFrom(flagIdentifier string) bool {
-	val, ok := cmd.Flags[flagIdentifier].Value.(bool)
+func (cmd *Command) BoolFrom(flagIdentifier string) (val bool) {
+	flag, ok := cmd.Flags[flagIdentifier]
 	if !ok {
-		return false
+		return
 	}
 
-	return val
+	val, ok = flag.Value.(bool)
+	if !ok {
+		return
+	}
+	return
 }
