@@ -41,15 +41,15 @@ func Help() string {
 		if strings.TrimSpace(cmd.Action) != "" {
 			msg += fmt.Sprintf(" %s %s\n  :: ", os.Args[0], cmd.Action)
 		} else {
-			msg += " <no command>\n  :: "
+			msg += " " + os.Args[0] + "\n  :: "
 		}
 		msg += cmd.Help
 		msg += "\n\n"
 	}
 
-	msg += "Flags:\n"
+	msg += "Flags:"
 	for _, flag := range staticParg.GlobalFlags {
-		msg += fmt.Sprintf(" %s\n  :: %s\n\n", flag.Identifiers, flag.Help)
+		msg += fmt.Sprintf("\n %s\n  :: %s\n", flag.Identifiers, flag.Help)
 	}
 
 	return msg
@@ -85,22 +85,28 @@ func (cmd *Command) ShowHelp() string {
 	}
 
 	if cmd.Action == "help" {
-		msg = ""
+		if len(cmd.Flags) == 0 {
+			msg = Help()
+		} else {
+			msg = ""
+		}
 	} else {
 		msg += cmd.Action + "\n"
-		if strings.TrimSpace(cmd.Action) != "" {
-			msg += fmt.Sprintf(" %s %s\n  :: ", os.Args[0], cmd.Action)
-		} else {
-			msg += " <no command>\n  :: "
-		}
+		msg += fmt.Sprintf(" %s %s\n  :: ", os.Args[0], cmd.Action)
 		msg += cmd.Help
 		msg += "\n"
 	}
 
 	if len(cmd.Flags) > 0 {
-		msg += "\nFlags:\n"
+		msg += "\nFlags:"
 		for _, flag := range cmd.Flags {
-			msg += fmt.Sprintf(" %s\n  :: %s\n\n", flag.Identifiers, flag.Help)
+			msg += fmt.Sprintf("\n %s\n  :: %s\n", flag.Identifiers, flag.Help)
+		}
+	}
+
+	if cmd.Action == "help" {
+		if len(cmd.Arguments) > 0 {
+			msg += "\nError parsing arguments: invalid command <" + cmd.Arguments[0].Name + "> encountered"
 		}
 	}
 

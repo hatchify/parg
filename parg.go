@@ -115,6 +115,12 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 	allowedFlags := p.GetGlobalFlags()
 	allowedCommands := p.GetAllowedCommands()
 
+	if cmd, ok := allowedCommands[""]; ok {
+		help = cmd.Help
+	} else {
+		help = Help()
+	}
+
 	var curFlag *Flag
 	var arg *string
 
