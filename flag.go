@@ -10,14 +10,17 @@ import (
 // Lack of command flags or global flags implies no flags are allowed
 type Flag struct {
 	// Name of flag
-	Name string
+	Name string `json:"name"`
 	// -flag values to match this flag instance
-	Identifiers []string
+	Identifiers []string `json:"identifiers"`
 	// Rules for parsing flag values
-	Type ArgType
+	Type ArgType `json:"type,omitempty"`
+
+	// Details regarding flag usage
+	Help string
 
 	// Populated values for returned flags
-	Value interface{}
+	Value interface{} `json:"value,omitempty"`
 }
 
 // Parse attempts to set the given value for the given flag. Returns false if it does not meet type criteria
