@@ -21,7 +21,7 @@ type Command struct {
 	Flags map[string]*Flag `json:"flags,omitempty"`
 
 	// Details regarding command usage
-	Help string
+	helpDetails string
 }
 
 // NewCommand returns a new instance of an empty command
@@ -43,7 +43,7 @@ func Help() string {
 		} else {
 			msg += " " + os.Args[0] + "\n  :: "
 		}
-		msg += cmd.Help
+		msg += cmd.helpDetails
 		msg += "\n\n"
 	}
 
@@ -55,8 +55,8 @@ func Help() string {
 	return msg
 }
 
-// ShowHelp will return a command's help. If help is the command, returns first arg or general help
-func (cmd *Command) ShowHelp() string {
+// Help will return a command's help. If help is the command, returns first arg or general help
+func (cmd *Command) Help() string {
 	msg := "\nCommand: "
 	if cmd.Action == "help" {
 		if len(cmd.Arguments) == 0 {
@@ -70,14 +70,14 @@ func (cmd *Command) ShowHelp() string {
 					if argCmd.Action == name {
 						// Show help for this cmd
 						cmd.Action = argCmd.Action
-						cmd.Help = argCmd.Help
+						cmd.helpDetails = argCmd.helpDetails
 						break
 					}
 				}
 				if argCmd.Action == cmd.Arguments[0].Name {
 					// Show help for this cmd
 					cmd.Action = argCmd.Action
-					cmd.Help = argCmd.Help
+					cmd.helpDetails = argCmd.helpDetails
 					break
 				}
 			}
@@ -93,7 +93,7 @@ func (cmd *Command) ShowHelp() string {
 	} else {
 		msg += cmd.Action + "\n"
 		msg += fmt.Sprintf(" %s %s\n  :: ", os.Args[0], cmd.Action)
-		msg += cmd.Help
+		msg += cmd.helpDetails
 		msg += "\n"
 	}
 

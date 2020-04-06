@@ -43,7 +43,7 @@ func (p *Parg) SetGlobalFlags(flags []Flag) {
 func (p *Parg) AddAction(action string, usage string) {
 	var command Command
 	command.Action = action
-	command.Help = usage
+	command.helpDetails = usage
 	p.AllowedCommands = append(p.AllowedCommands, command)
 }
 
@@ -116,7 +116,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 	allowedCommands := p.GetAllowedCommands()
 
 	if cmd, ok := allowedCommands[""]; ok {
-		help = cmd.Help
+		help = cmd.helpDetails
 	} else {
 		help = Help()
 	}
@@ -214,7 +214,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 					// Set command
 					curCommand = cmd
 					action = cmd.Action
-					help = cmd.Help
+					help = cmd.helpDetails
 				} else {
 					return nil, fmt.Errorf("invalid command <" + *arg + "> encountered")
 				}
