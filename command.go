@@ -47,9 +47,11 @@ func Help() string {
 		msg += "\n\n"
 	}
 
-	msg += "Flags:"
-	for _, flag := range staticParg.GlobalFlags {
-		msg += fmt.Sprintf("\n %s\n  :: %s\n", flag.Identifiers, flag.Help)
+	if len(staticParg.GlobalFlags) > 0 {
+		msg += "Flags:"
+		for _, flag := range staticParg.GlobalFlags {
+			msg += fmt.Sprintf("\n %s\n  :: %s\n", flag.Identifiers, flag.Help)
+		}
 	}
 
 	return msg
