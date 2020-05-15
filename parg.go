@@ -47,6 +47,15 @@ func (p *Parg) AddAction(action string, usage string) {
 	p.AllowedCommands = append(p.AllowedCommands, command)
 }
 
+// AddHandler is a shortcut for adding a command with callback on Exec
+func (p *Parg) AddHandler(action string, handler func(cmd *Command) (err error), usage string) {
+	var command Command
+	command.Action = action
+	command.helpDetails = usage
+	command.handler = handler
+	p.AllowedCommands = append(p.AllowedCommands, command)
+}
+
 // AddCommand appends an allowed command to expect.
 // Empty set enforces no arguments, throws error if argument detected
 // Adding Command with name "" allows no arguments, along with any other allowed commands
@@ -108,6 +117,7 @@ func Simple() *Command {
 func (p *Parg) validate(argV []string) (*Command, error) {
 	var curCommand *Command
 	var action string
+	var handler func(cmd *Command) (err error)
 	var args = []*Argument{}
 	var flags = map[string]*Flag{}
 	var help = ""
@@ -214,6 +224,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 					// Set command
 					curCommand = cmd
 					action = cmd.Action
+					handler = cmd.handler
 					help = cmd.helpDetails
 				} else {
 					return nil, fmt.Errorf("invalid command <" + *arg + "> encountered")
@@ -252,7 +263,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 	} else {
 		return nil, fmt.Errorf("invalid command <" + action + "> encountered")
 	}
-	return &Command{action, args, flags, help}, nil
+	return &Command{action, args, flags, handler, help}, nil
 }
 
 // simpleParse returns a generically parsed argument structure, with default parsing rules:

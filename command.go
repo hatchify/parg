@@ -20,6 +20,8 @@ type Command struct {
 	// Flags returned by matched action instance
 	Flags map[string]*Flag `json:"flags,omitempty"`
 
+	handler func(cmd *Command) (err error)
+
 	// Details regarding command usage
 	helpDetails string
 }
@@ -55,6 +57,15 @@ func Help() string {
 	}
 
 	return msg
+}
+
+// Exec will run handler
+func (cmd *Command) Exec() (err error) {
+	if cmd.handler == nil {
+		err = fmt.Errorf("unable to exec cmd \"%s\": no handler set", cmd.Action)
+	}
+
+	return cmd.handler(cmd)
 }
 
 // Help will return a command's help. If help is the command, returns first arg or general help
