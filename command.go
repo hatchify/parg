@@ -31,6 +31,7 @@ func NewCommand() (cmd *Command) {
 	var command Command
 	command.Arguments = []*Argument{}
 	command.Flags = map[string]*Flag{}
+	command.handler = nil
 
 	cmd = &command
 	return
@@ -57,15 +58,6 @@ func Help() string {
 	}
 
 	return msg
-}
-
-// Exec will run handler
-func (cmd *Command) Exec() (err error) {
-	if cmd.handler == nil {
-		err = fmt.Errorf("unable to exec cmd \"%s\": no handler set", cmd.Action)
-	}
-
-	return cmd.handler(cmd)
 }
 
 // Help will return a command's help. If help is the command, returns first arg or general help
@@ -124,6 +116,15 @@ func (cmd *Command) Help() string {
 	}
 
 	return msg
+}
+
+// Exec will run handler
+func (cmd *Command) Exec() (err error) {
+	if cmd.handler == nil {
+		err = fmt.Errorf("unable to exec cmd \"%s\": no handler set", cmd.Action)
+	}
+
+	return cmd.handler(cmd)
 }
 
 // Args returns array of arg names

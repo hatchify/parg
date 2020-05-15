@@ -117,7 +117,7 @@ func Simple() *Command {
 func (p *Parg) validate(argV []string) (*Command, error) {
 	var curCommand *Command
 	var action string
-	var handler func(cmd *Command) (err error)
+	var handler func(cmd *Command) (err error) = nil
 	var args = []*Argument{}
 	var flags = map[string]*Flag{}
 	var help = ""
@@ -258,8 +258,15 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 		}
 	}
 
-	if _, ok := allowedCommands[action]; ok || len(action) == 0 && len(allowedCommands) == 0 {
+	if cmd, ok := allowedCommands[action]; ok || len(action) == 0 && len(allowedCommands) == 0 {
 		// Command allowed
+		if len(argV) == 0 {
+			// Set cmd
+			curCommand = cmd
+			action = cmd.Action
+			handler = cmd.handler
+			help = cmd.helpDetails
+		}
 	} else {
 		return nil, fmt.Errorf("invalid command <" + action + "> encountered")
 	}
