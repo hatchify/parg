@@ -21,7 +21,7 @@ const (
 )
 
 // Expects returns a string indicating what the type should parse
-func (a *ArgType) Expects() string {
+func (a ArgType) Expects() string {
 	switch a {
 	case DEFAULT:
 		return "a single string"
