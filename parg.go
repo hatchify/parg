@@ -129,7 +129,7 @@ func (p *Parg) validate(argV []string) (*Command, error) {
 		help = cmd.helpDetails
 		handler = cmd.handler
 	} else {
-		help = Help()
+		help = Help(true)
 	}
 
 	var curFlag *Flag

@@ -38,22 +38,30 @@ func NewCommand() (cmd *Command) {
 }
 
 // Help will return all available commands and flags
-func Help() string {
-	msg := "\nCommands:\n"
+func Help(markdown bool) string {
+	var prefix = ""
+	if markdown {
+		prefix = "#"
+	}
+
+	var doublePrefix = prefix + prefix
+	var triplePrefix = doublePrefix + prefix
+
+	msg := "\n" + doublePrefix + " Commands\n\n"
 	for _, cmd := range staticParg.AllowedCommands {
 		if strings.TrimSpace(cmd.Action) != "" {
-			msg += fmt.Sprintf(" %s %s\n  :: ", os.Args[0], cmd.Action)
+			msg += fmt.Sprintf("%s %s %s\n  :: ", triplePrefix, os.Args[0], cmd.Action)
 		} else {
-			msg += " " + os.Args[0] + "\n  :: "
+			msg += triplePrefix + " " + os.Args[0] + "\n  :: "
 		}
 		msg += cmd.helpDetails
 		msg += "\n\n"
 	}
 
 	if len(staticParg.GlobalFlags) > 0 {
-		msg += "Flags:"
+		msg += doublePrefix + " Flags\n"
 		for _, flag := range staticParg.GlobalFlags {
-			msg += fmt.Sprintf("\n %s\n  :: %s\n", flag.Identifiers, flag.Help)
+			msg += fmt.Sprintf("\n%s %s\n  :: %s\n", triplePrefix, flag.Identifiers, flag.Help)
 		}
 	}
 
@@ -61,13 +69,21 @@ func Help() string {
 }
 
 // Help will return a command's help. If help is the command, returns first arg or general help
-func (cmd *Command) Help() string {
-	msg := "\nCommand: "
+func (cmd *Command) Help(markdown bool) string {
+	var prefix = ""
+	if markdown {
+		prefix = "#"
+	}
+
+	var doublePrefix = prefix + prefix
+	var triplePrefix = doublePrefix + prefix
+
+	msg := "\n" + doublePrefix + " Command: "
 	if cmd.Action == "help" {
 		if len(cmd.Arguments) == 0 {
 			// Show regular help
 			if len(cmd.Flags) == 0 {
-				return Help()
+				return Help(true)
 			}
 		} else {
 			for _, argCmd := range staticParg.AllowedCommands {
@@ -91,22 +107,25 @@ func (cmd *Command) Help() string {
 
 	if cmd.Action == "help" {
 		if len(cmd.Flags) == 0 {
-			msg = Help()
+			msg = Help(true)
 		} else {
 			msg = ""
 		}
 	} else {
-		msg += cmd.Action + "\n"
-		msg += fmt.Sprintf(" %s %s\n  :: ", os.Args[0], cmd.Action)
+		msg += cmd.Action + "\n\n"
+		msg += fmt.Sprintf("%s %s %s\n  :: ", triplePrefix, os.Args[0], cmd.Action)
 		msg += cmd.helpDetails
 		msg += "\n"
 	}
 
 	if len(cmd.Flags) > 0 {
-		msg += "\nFlags:"
+		msg += "\n" + doublePrefix + " Flags: "
+		output := ""
 		for _, flag := range cmd.Flags {
-			msg += fmt.Sprintf("\n %s\n  :: %s\n", flag.Identifiers, flag.Help)
+			msg += flag.Name + " "
+			output += fmt.Sprintf("\n%s %s\n  :: %s\n", triplePrefix, flag.Identifiers, flag.Help)
 		}
+		msg += "\n" + output
 	}
 
 	if cmd.Action == "help" {
